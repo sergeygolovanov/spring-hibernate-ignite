@@ -1,0 +1,54 @@
+ignite:
+  igniteInstanceName: HibernateL2CacheGrid
+  p2pEnabled: true
+  dataStorageConfiguration:
+    defaultDataRegionConfiguration:
+      initialSize: 1073741824 #1GB
+      persistenceEnabled: true
+      pageEvictionMode: RANDOM_LRU
+  cacheConfiguration:
+    - name: atomic-cache
+      cacheMode: PARTITIONED
+      atomicityMode: ATOMIC
+      writeSynchronizationMode: FULL_SYNC
+    - name: transactional-cache
+      cacheMode: PARTITIONED
+      atomicityMode: TRANSACTIONAL
+      writeSynchronizationMode: FULL_SYNC
+
+spring:
+
+  application:
+    name: HibernateL2Cache
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+#    url: jdbc:mysql://127.0.0.1:3306/crmng
+#    driverClassName: com.mysql.cj.jdbc.Driver
+    username: crm
+    password: password
+
+  jpa:
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        generate_statistics: true
+        cache:
+          use_query_cache: true
+          use_second_level_cache: true
+          region:
+            factory_class: org.apache.ignite.cache.hibernate.HibernateRegionFactory
+      org:
+        apache:
+          ignite:
+            hibernate:
+              ignite_instance_name: HibernateL2CacheGrid
+              default_access_type: READ_WRITE
+
+
